@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGRI-NEON // ระบบประเมินการตลาดเกษตรอัจฉริยะ</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0a0f0d;
+            --panel-bg: rgba(16, 26, 20, 0.8);
+            --neon-green: #39ff14;
+            --neon-blue: #00f0ff;
+            --neon-pink: #ff007f;
+            --text-color: #e0e6ed;
+            --border-glow: 0 0 10px rgba(57, 255, 20, 0.3), 0 0 20px rgba(57, 255, 20, 0.2);
+            --blue-glow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            background-image: radial-gradient(circle at 50% 50%, #112217 0%, #0a0f0d 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Neon Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050806; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-green); border-radius: 4px; box-shadow: 0 0 5px var(--neon-green); }
+
+        /* Header & Navigation */
+        header {
+            background: rgba(10, 15, 13, 0.9);
+            border-bottom: 2px solid var(--neon-green);
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            box-shadow: var(--border-glow);
+            background: rgba(57, 255, 20, 0.1);
+        }
+
+        /* Container Pages */
+        .page {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: none;
+        }
+
+        .page.active-page {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glassmorphism Panels */
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid rgba(57, 255, 20, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(4px);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+        }
+
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        .neon-text-blue { text-shadow: 0 0 10px var(--neon-blue); color: var(--neon-blue); }
+        .neon-text-green { text-shadow: 0 0 10px var(--neon-green); color: var(--neon-green); }
+
+        /* Auth Form Styles */
+        .auth-container {
+            max-width: 450px;
+            margin: 60px auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--neon-blue);
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--neon-blue);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--neon-green);
+            box-shadow: var(--border-glow);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            box-shadow: var(--border-glow);
+        }
+
+        .btn:hover {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+
+        .btn-alt {
+            border-color: var(--neon-blue);
+            box-shadow: var(--blue-glow);
+        }
+        .btn-alt:hover {
+            background: var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        /* Market Table Styles */
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--neon-green);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--border-glow);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            max-height: 600px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        th {
+            background: rgba(57, 255, 20, 0.1);
+            color: var(--neon-green);
+            font-family: 'Orbitron', sans-serif;
+            sticky: top;
+        }
+
+        tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .badge-profit { background: rgba(57, 255, 20, 0.2); color: var(--neon-green); border: 1px solid var(--neon-green); }
+        .badge-loss { background: rgba(255, 0, 127, 0.2); color: var(--neon-pink); border: 1px solid var(--neon-pink); }
+
+        /* Grid Layouts */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .nav-container { flex-direction: column; gap: 15px; }
+        }
+
+        /* Dashboard widgets */
+        .widget {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            border: 1px dashed rgba(0, 240, 255, 0.4);
+        }
+        .widget i { font-size: 40px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fa-solid fa-seedling"></i> AGRI-NEON V2.6
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link active" onclick="switchPage('home')">หน้าหลัก</a></li>
+                    <li><a href="#" class="nav-link" onclick="switchPage('market')">ประเมินราคาตลาด (100 ชนิด)</a></li>
+                    <li><a href="#" class="nav-link" onclick="switchPage('recommend')">ระบบแนะนำพืชตามฤดูกาล</a></li>
+                    <li><a href="#" class="nav-link" id="user-nav" onclick="switchPage('login')">เข้าสู่ระบบ / สมัครสมาชิก</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- PAGE 1: HOME -->
+    <div id="home" class="page active-page">
+        <div class="panel" style="text-align: center; padding: 60px 20px;">
+            <h1 style="font-size: 3.5rem; letter-spacing: 2px;" class="neon-text-green">AGRI-MARKET EVALUATION</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 30px; color: #a0aec0;">ระบบจำลองและวิเคราะห์การตลาดเกษตรกรรมอัจฉริยะ ยุคความแม่นยำสูงแห่งปี 2026</p>
+            <div style="max-width: 200px; margin: 0 auto;">
+                <button class="btn" onclick="switchPage('market')">เริ่มประเมินตลาด</button>
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <div class="panel widget">
+                <i class="fa-solid fa-chart-line neon-text-green"></i>
+                <h3>ราคาข้าวปัจจุบัน</h3>
+                <p style="margin-top:10px;">ข้าวหอมมะลิ: <span class="neon-text-green">16,500 บาท/ตัน</span></p>
+                <p>ข้าวขาว 15%: <span class="neon-text-blue">13,200 บาท/ตัน</span></p>
+            </div>
+            <div class="panel widget">
+                <i class="fa-solid fa-temperature-high neon-text-blue"></i>
+                <h3>ดัชนีพืชขายดีช่วงนี้</h3>
+                <p style="margin-top:10px;">พืชไฮโดรโปนิกส์ & ผลไม้นอกฤดูกาล</p>
+                <p>ความต้องการตลาด: <span class="neon-text-green">สูงมาก (+24%)</span></p>
+            </div>
+            <div class="panel widget">
+                <i class="fa-solid fa-user-check neon-text-green"></i>
+                <h3>สถานะผู้ใช้งาน</h3>
+                <p style="margin-top:10px;" id="home-auth-status">กรุณาเข้าสู่ระบบเพื่อบันทึกข้อมูลฟาร์มของคุณ</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: LOGIN / REGISTER -->
+    <div id="login" class="page">
+        <div class="grid-2">
+            <!-- Login Form -->
+            <div class="panel auth-container">
+                <h2 class="neon-text-blue"><i class="fa-solid fa-lock"></i> SIGN IN // เข้าสู่ระบบ</h2>
+                <form id="loginForm" onsubmit="handleAuth(event, 'login')">
+                    <div class="form-group">
+                        <label>ชื่อผู้ใช้งาน หรือ อีเมล</label>
+                        <input type="text" id="login-username" required placeholder="username / email">
+                    </div>
+                    <div class="form-group">
+                        <label>รหัสผ่าน</label>
+                        <input type="password" id="login-pass" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-alt">เข้าสู่ระบบเทคโนโลยี</button>
+                </form>
+            </div>
+
+            <!-- Register Form -->
+            <div class="panel auth-container">
+                <h2 class="neon-text-green"><i class="fa-solid fa-user-plus"></i> REGISTER // สมัครสมาชิก</h2>
+                <form id="regForm" onsubmit="handleAuth(event, 'register')">
+                    <div class="form-group">
+                        <label>ชื่อผู้ใช้งานระบบ</label>
+                        <input type="text" id="reg-username" required placeholder="เกษตรกรอัจฉริยะ">
+                    </div>
+                    <div class="form-group">
+                        <label>อีเมล</label>
+                        <input type="email" id="reg-email" required placeholder="farmer@smartfarm.com">
+                    </div>
+                    <div class="form-group">
+                        <label>รหัสผ่านควบคุม</label>
+                        <input type="password" id="reg-pass" required placeholder="ตั้งรหัสผ่านของคุณ">
+                    </div>
+                    <button type="submit" class="btn">ยืนยันลงทะเบียน</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: MARKET EVALUATION (100 ITEMS) -->
+    <div id="market" class="page">
+        <div class="panel">
+            <h2 class="neon-text-green"><i class="fa-solid fa-magnifying-glass-chart"></i> ระบบตรวจสอบกำไร-ขาดทุนตลาดผลไม้และพืชผล (100 ชนิด)</h2>
+            <p style="margin-bottom: 20px; color: #aaa;">คำนวณจากราคาซื้อขายจริงในท้องตลาดจำลองปี 2026 เทียบกับต้นทุนเฉลี่ยประเทศ</p>
+            
+            <input type="text" class="search-box" id="searchCrop" onkeyup="filterCrops()" placeholder="🔍 พิมพ์ชื่อผลไม้หรือพืชพรรณเพื่อค้นหาใน 100 ชนิด...">
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ลำดับ</th>
+                            <th>ประเภท</th>
+                            <th>ชื่อพืชผล</th>
+                            <th>ต้นทุนเฉลี่ย (บาท/กก.)</th>
+                            <th>ราคาตลาดตอนนี้ (บาท/กก.)</th>
+                            <th>ส่วนต่างกำไร/ขาดทุน</th>
+                            <th>สถานะประเมิน</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cropTableBody">
+                        <!-- Generate by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 4: RECOMMENDATION -->
+    <div id="recommend" class="page">
+        <div class="panel">
+            <h2 class="neon-text-blue"><i class="fa-solid fa-wand-magic-sparkles"></i> ช่วงนี้ปลูกอะไรดี? // คำแนะนำการตลาดไตรมาสนี้</h2>
+            <p style="margin-bottom: 20px;">วิเคราะห์จากสภาพอากาศปี 2026 ปริมาณน้ำ และความต้องการของผู้บริโภค</p>
+            
+            <div class="grid-2">
+                <div class="panel" style="border-color: var(--neon-green)">
+                    <h3 class="neon-text-green"><i class="fa-solid fa-fire"></i> พืชแนะนำกระแสแรง (ทำกำไรสูงสุดตอนนี้)</h3>
+                    <ul style="padding-left: 20px; line-height: 2 spray; margin-top: 15px;">
+                        <li><strong>ทุเรียนหมอนทอง (นอกฤดูกาล):</strong> ตลาดส่งออกต้องการสูงมาก กำไรต่อกิโลกรัม > 110 บาท</li>
+                        <li><strong>อะโวคาโดพันธุ์แฮสส์ (Hass):</strong> กลุ่มรักสุขภาพบริโภคสูง ปลูกในพื้นที่สูงได้ราคาดีมาก</li>
+                        <li><strong>เมล่อนญี่ปุ่นในโรงเรือน:</strong> ควบคุมคุณภาพได้ ตลาดระดับพรีเมียมจองล่วงหน้า</li>
+                        <li><strong>ผักเคล (Kale) และผักสลัดไฮโดรโปนิกส์:</strong> รอบเก็บเกี่ยวสั้น 30-45 วัน ส่งร้านอาหารในเมืองใหญ่ได้ตลอดปี</li>
+                    </ul>
+                </div>
+                <div class="panel" style="border-color: var(--neon-pink)">
+                    <h3 class="neon-text-pink"><i class="fa-solid fa-triangle-exclamation"></i> พืชที่ควรชะลอการปลูก (ความเสี่ยงล้นตลาด)</h3>
+                    <ul style="padding-left: 20px; line-height: 2; margin-top: 15px;">
+                        <li><strong>หอมแดง / กระเทียม:</strong> ผลผลิตนำเข้าหนุนตลาด ราคาในประเทศค่อนข้างทรงตัวและเสี่ยงขาดทุน</li>
+                        <li><strong>สับปะรดโรงงาน:</strong> โรงงานแปรรูปมีกำลังการผลิตจำกัด ปลูกมากไปจะโดนกดราคา</li>
+                        <li><strong>กล้วยหอมทอง:</strong> เกษตรกรหันมาปลูกจำนวนมากในช่วงปีที่ผ่านมา เสี่ยงภาวะล้นตลาดในอีก 3 เดือนข้างหน้า</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3 class="neon-text-blue"><i class="fa-solid fa-wheat-awn"></i> เจาะลึกตลาดข้าว (ดัชนีราคาปี 2026)</h3>
+                <div class="grid-3" style="margin-top: 15px;">
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px;">
+                        <h4>ข้าวหอมมะลิ 105</h4>
+                        <p style="color: var(--neon-green); font-size: 20px; font-weight: bold;">16,500 บาท / ตัน</p>
+                        <p style="font-size:12px; color:#888;">แนวโน้ม: คงตัวสูง (ตลาดส่งออกฟื้นตัว)</p>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px;">
+                        <h4>ข้าวกล้องไรซ์เบอร์รี่</h4>
+                        <p style="color: var(--neon-green); font-size: 20px; font-weight: bold;">28,000 บาท / ตัน</p>
+                        <p style="font-size:12px; color:#888;">แนวโน้ม: เติบโตต่อเนื่อง (ตลาด Niche Market)</p>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px;">
+                        <h4>ข้าวเหนียว กข6</h4>
+                        <p style="color: var(--neon-pink); font-size: 20px; font-weight: bold;">12,000 บาท / ตัน</p>
+                        <p style="font-size:12px; color:#888;">แนวโน้ม: ผันผวนต่ำ (ปริมาณในประเทศมีมาก)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript Control -->
+    <script>
+        // Page Router
+        function switchPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active-page'));
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            document.getElementById(pageId).classList.add('active-page');
+            event.target.classList.add('active');
+        }
+
+        // Authentication System Mockup
+        let loggedInUser = null;
+
+        function handleAuth(event, type) {
+            event.preventDefault();
+            if(type === 'register') {
+                const user = document.getElementById('reg-username').value;
+                alert(`ลงทะเบียนผู้ใช้ "${user}" สำเร็จในระบบ Agri-Neon Database แล้ว!`);
+                document.getElementById('regForm').reset();
+            } else if(type === 'login') {
+                const user = document.getElementById('login-username').value;
+                loggedInUser = user;
+                alert(`ยินดีต้อนรับคุณ ${user} เข้าสู่ระบบควบคุมอัจฉริยะ`);
+                document.getElementById('user-nav').innerText = `👤 ${user}`;
+                document.getElementById('home-auth-status').innerHTML = `สวัสดีคุณ <b>${user}</b> <br><span style="color: var(--neon-green)">เชื่อมต่อฐานข้อมูลฟาร์มของคุณแล้ว</span>`;
+                switchPage('home');
+            }
+        }
+
+        // Generate 100 Crops Data for Evaluation
+        const cropTypes = ["ผลไม้", "ผักเศรษฐกิจ", "พืชหัว", "สมุนไพร"];
+        const fruitNames = [
+            "ทุเรียนหมอนทอง", "ทุเรียนก้านยาว", "มังคุด", "เงาะโรงเรียน", "ลองกอง", "ลิ้นจี่จักรพรรดิ", "ลำไยอีดอ", "มะม่วงน้ำดอกไม้", 
+            "มะม่วงเขียวเสวย", "ส้มสายน้ำผึ้ง", "ส้มโอทับทิมสยาม", "สับปะรดภูแล", "สับปะรดปัตตาเวีย", "กล้วยหอมทอง", "กล้วยน้ำว้า", 
+            "กล้วยไข่", "มะละกอฮอลแลนด์", "มะละกอแขกดำ", "แตงโมจินตหรา", "แคนตาลูป", "เมล่อนญี่ปุ่น", "แก้วมังกรเนื้อแดง", 
+            "แก้วมังกรเนื้อขาว", "ฝรั่งกิมจู", "ฝรั่งหงเป่าสือ", "ชมพู่ทับทิมจันทร์", "ชมพู่เพชรสายรุ้ง", "มะพร้าวน้ำหอม", 
+            "มะพร้าวแกง", "ขนุนทองประเสริฐ", "สละอินโด", "สละสุมาลี", "กระท้อนอีล่า", "ลองกองซีโล", "พุทราสามรส", 
+            "พุทรานมสด", "มะขามหวานประกายทอง", "มะขามเทศนมสด", "องุ่นไร้เมล็ด", "สตรอว์เบอร์รี่พระราชทาน 80", "เสาวรส", 
+            "อะโวคาโดแฮสส์", "อะโวคาโดบูธ 7", "ลูกพลับ", "ลิ้นจี่ฮงฮวย", "มะบี", "อินทผลัมกินผลสด", "น้อยหน่าเพชรปากช่อง", 
+            "มะไฟ", "ละมุดกระสวยมาเลย์", "ผักกาดขาว", "กะหล่ำปลี", "บล็อคโคลี่", "ผักเคล", "ผักบุ้งจีน", "กวางตุ้ง", 
+            "คะน้าฮ่องกง", "ผักชี", "ต้นหอม", "ขึ้นฉ่าย", "พริกขี้หนูสวน", "พริกชี้ฟ้า", "พริกหนุ่ม", "มะเขือเทศราชินี", 
+            "มะเขือเทศท้อ", "มะเขือยาว", "มะเขือเปราะ", "แตงกวา", "ถั่วฝักยาว", "ถั่วลันเตา", "ข้าวโพดหวาน", "ข้าวโพดฝักอ่อน", 
+            "กระเจี๊ยบเขียว", "หน่อไม้ฝรั่ง", "อัญชัน", "ใบบัวบก", "กะเพรา", "โหระพา", "แมงลัก", "สะระแหน่", "ตะไคร้", 
+            "ข่า", "ขิงแก่", "ขิงอ่อน", "กระชายขาว", "กระชายดำ", "ขมิ้นชัน", "เผือกหอม", "มันเทศญี่ปุ่น", "มันสำปะหลัง", 
+            "บัวหลวงกินสาย", "แห้วสุพรรณ", "แฟง", "ฟักทองทองอำไพ", "บวบเหลี่ยม", "มะระขี้นก", "มะระจีน", "เห็ดฟาง", 
+            "เห็ดนางฟ้า", "เห็ดออริจิน"
+        ];
+
+        function generateCropData() {
+            const tableBody = document.getElementById('cropTableBody');
+            tableBody.innerHTML = "";
+
+            for (let i = 0; i < 100; i++) {
+                const name = fruitNames[i] || `พืชเศรษฐกิจชนิดที่ ${i+1}`;
+                const type = i < 50 ? "ผลไม้" : (i < 80 ? "ผักเศรษฐกิจ" : "พืชหัว/สมุนไพร");
+                
+                // สุ่มต้นทุนและราคาตลาดให้สมจริงแบบเดาผลลัพธ์กำไรขาดทุน
+                const baseCost = Math.floor(Math.random() * 80) + 15;
+                const priceFluctuation = (Math.random() * 60) - 25; // มีโอกาสติดลบ (ขาดทุน)
+                const marketPrice = Math.max(10, Math.floor(baseCost + priceFluctuation));
+                
+                const profit = marketPrice - baseCost;
+                const statusBadge = profit > 0 
+                    ? `<span class="badge badge-profit"><i class="fa-solid fa-arrow-trend-up"></i> กำไร</span>` 
+                    : `<span class="badge badge-loss"><i class="fa-solid fa-arrow-trend-down"></i> ขาดทุน</span>`;
+                
+                const profitText = profit > 0 
+                    ? `<span style="color:var(--neon-green)">+${profit} บาท</span>` 
+                    : `<span style="color:var(--neon-pink)">${profit} บาท</span>`;
+
+                const row = `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td style="color: var(--neon-blue)">${type}</td>
+                        <td><strong>${name}</strong></td>
+                        <td>${baseCost}</td>
+                        <td>${marketPrice}</td>
+                        <td>${profitText}</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            }
+        }
+
+        // ค้นหาพืชผลในตาราง
+        function filterCrops() {
+            const input = document.getElementById('searchCrop').value.toLowerCase();
+            const rows = document.getElementById('cropTableBody').getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const cropName = rows[i].getElementsByTagName('td')[2].innerText.toLowerCase();
+                if (cropName.includes(input)) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+
+        // สั่งให้รันสร้างข้อมูลพืช 100 ชนิดทันทีเมื่อโหลดหน้าเว็บ
+        window.onload = generateCropData;
+    </script>
+</body>
+</html>
